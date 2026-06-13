@@ -9,9 +9,10 @@ x-app: &default-app
   depends_on:
     db:
       condition: service_healthy
-      required: false
   env_file:
     - ".env"
+  networks:
+    - backend
 
 
 services:
@@ -39,17 +40,27 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - backend
 
 
   web:
     <<: *default-app
     ports:
       - "8000:${PORT:-8000}"
+    deploy:
+      resources:
+        limits:
+          memory: 521M
+          cpus: "1.0"
     healthcheck:
       test: "curl -X 'GET' 'http://localhost:8000/spost/up/' -H 'accept: application/json'"
       interval: "60s"
       timeout: "3s"
       start_period: "5s"
+    networks:
+      - frontend
+      - backend
 
 volumes:
   db-data:
@@ -57,3 +68,9 @@ volumes:
 secrets:
   db-password:
     file: ./infrastructure/db/password.txt
+
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    internal: true
