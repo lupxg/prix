@@ -1,8 +1,8 @@
-# Smallpost
+# prix
 A minimal post application built with Docker and Flask. 
 
 ## Description
-Smallpost is a lightweight API that allows users to create and retrieve posts. It is designed to demonstrate a simple backend architecture using Flask and MySQL, fully containerized with Docker.
+prix is a lightweight API that allows users to create and retrieve posts. It is designed to demonstrate a simple backend architecture using Flask and MySQL, fully containerized with Docker.
 
 ## Motivation
 This is a personal project created to explore Docker and Flask in a practical way.
