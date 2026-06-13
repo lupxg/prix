@@ -17,7 +17,7 @@ COPY --from=ghcr.io/astral-sh/uv:0.8.17 /uv /uvx /bin/
 
 USER appuser 
 
-COPY --chown=appuser:appuser /backend/pyproject.toml /backend/uv.lock* . 
+COPY --chown=appuser:appuser /postapi/pyproject.toml /postapi/uv.lock* . 
 
 ENV PYTHONDONTWRITEBYTECODE=1 \ 
     PYTHONUNBUFFERED=1 \ 
@@ -61,7 +61,7 @@ ENV UV_PROJECT_ENVIRONMENT="/home/appuser/.local" \
     USER="appuser" 
     
 COPY --chown=appuser:appuser --from=app-build /home/appuser/.local /home/appuser/.local
-COPY --chown=appuser:appuser /backend . 
+COPY --chown=appuser:appuser /postapi . 
 
 EXPOSE 8000 
 CMD ["gunicorn", "-b", "0.0.0.0:8000", "app.app:create_app()"]
