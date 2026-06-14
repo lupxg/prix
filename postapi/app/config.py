@@ -9,15 +9,15 @@ def read_secret(path):
         return None
 
 
-password = read_secret(os.getenv("MARIADB_ROOT_PASSWORD_FILE"))
+password = read_secret(os.getenv("MARIADB_PASSWORD_FILE"))
 host = os.getenv("MARIADB_HOST", "db")
-user = os.getenv("MARIADB_USER", "root")
+user = os.getenv("MARIADB_USER", "userconnect")
 name = os.getenv("MARIADB_NAME", "spost")
 port = os.getenv("MARIADB_PORT", "3306")
 db_url = f"mysql+pymysql://{user}:{password}@{host}:{port}/{name}"
 
 
-SECRET_KEY = "JGAA9GA9AGHUAGJAKGJAGjgakl7ga7uklfjalkgklasjflasjflasjflkasjflkasjfklasjklgaioutuiujgklj"
+SECRET_KEY = os.getenv("SECRET_KEY", "gjkjhjkhj886jh8ih+958k")
 SQLALCHEMY_ENGINE_OPTIONS = {
     "pool_recycle": 200,
     "pool_pre_ping": True,
