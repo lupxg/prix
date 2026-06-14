@@ -1,8 +1,4 @@
 # Flask Microservice .gitignore
-
-# database folder.
-db/
-
 # Flask instance folder
 instance/
 
