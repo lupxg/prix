@@ -22,12 +22,14 @@ services:
     restart: always
     secrets:
       - db-password
+      - db-root-password
     volumes:
       - db-data:/var/lib/mysql
     environment: 
       MARIADB_ROOT_PASSWORD_FILE: "${MARIADB_ROOT_PASSWORD_FILE}" 
       MARIADB_PASSWORD_FILE: "${MARIADB_PASSWORD_FILE}"
       MARIADB_DATABASE: "${MARIADB_NAME}"
+      MARIADB_USER: "${MARIADB_USER}"
     expose: 
       - "${MARIADB_PORT:-3306}"
     healthcheck:

@@ -1,19 +1,25 @@
 from flask_restx import Namespace, Resource, fields
 from flask import request
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy import select
 from .model import Post
 from http import HTTPStatus
 from app.posts.postDTO import PostDTO
 from ..extensions import db
-from app.utils import token_required
 
 api = Namespace('posts', description='Post related operations')
 
 post_model = api.model("Post", {
-    "id": fields.Integer,
-    "title": fields.String,
-    "body": fields.String,
-    "created_at": fields.DateTime,
+    "id": fields.Integer(),
+    "user_id": fields.Integer(),
+    "title": fields.String(),
+    "body": fields.String(),
+    "created_at": fields.DateTime(),
+})
+
+create_post_model = api.model("CreatePost", {
+    "title": fields.String(required=True),
+    "body": fields.String(required=True),
 })
 
 @api.route("/")
@@ -31,17 +37,19 @@ class PostsList(Resource):
 
 
     @api.response(HTTPStatus.CREATED, 'Created post')
-    @api.expect(post_model)
-    @token_required
+    @api.expect(create_post_model)
+    @jwt_required()
     @api.doc(security='Bearer')
-    def post(self, current_user):
+    def post(self):
         """ Creates a post
         """
-
-        user_post = request.get_json()
-        postDTO = PostDTO(**user_post)
+        
+        current_user_id = int(get_jwt_identity())
+        data = request.get_json()
+        postDTO = PostDTO(**data)
         post = Post(**vars(postDTO))
+        post.user_id = current_user_id
         db.session.add(post)
         db.session.commit()
 
-        return request.json, HTTPStatus.CREATED
+        return {"msg" : "Post created"}, HTTPStatus.CREATED

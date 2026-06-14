@@ -26,5 +26,6 @@ SQLALCHEMY_DATABASE_URI = os.getenv("MARIADB_DATABASE_URL", db_url)
 
 
 # JWT config.
+jwt_secret_key = os.getenv("JWT_SECRET_KEY")
 jwt_token_expires = os.getenv("JWT_ACCESS_TOKEN_EXPIRES", 900)
 jwt_refresh_token_expires = os.getenv("JWT_REFRESH_TOKEN_EXPIRES", 604800)

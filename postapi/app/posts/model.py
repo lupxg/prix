@@ -1,7 +1,13 @@
 from ..extensions import db
-from sqlalchemy import String, DateTime, Text
+from sqlalchemy import (
+    String, 
+    DateTime, 
+    Text,  
+    ForeignKey, 
+    Enum
+)
 from sqlalchemy.orm import Mapped, mapped_column
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 class Post(db.Model):
@@ -12,10 +18,23 @@ class Post(db.Model):
     __abstract__ = False
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    title: Mapped[str] = mapped_column(String(150), nullable=False)
-    body: Mapped[str] = mapped_column(Text, nullable=False)
-    # slug: Mapped[str] = mapped_column(String(200), unique=True, index=True)
-    created_at: Mapped[DateTime] = mapped_column(
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("user.id"),
+        nullable=False
+    )
+    title: Mapped[str] = mapped_column(
+        String(150), 
+        nullable=False
+    )
+    body: Mapped[str] = mapped_column(
+        Text, 
+        nullable=False
+    )
+    created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
-        default=datetime.utcnow)
-    status: Mapped[str] = mapped_column(String(20), default="draft")
+        default=lambda: datetime.now(timezone.utc)
+    )
+    status: Mapped[str] = mapped_column(
+        Enum("draft", "published", "archived", name="post_status"), 
+        default="draft"
+    )
