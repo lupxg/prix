@@ -7,7 +7,6 @@ db/
 instance/
 
 # Environment variables
-.env
 .env.local
 .flaskenv
 
