@@ -1,9 +1,17 @@
 from flask import Flask
 from app.extensions import db, migrate
 from flask_restx import Api
+from flask_jwt_extended import JWTManager
 from .routes import register_routes
 
-authorizations = {'Bearer': {'type':'apiKey', 'in':'header','name':'Authorization'}}
+authorizations = {
+    "Bearer": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "description": "JWT Authorization header using the Bearer scheme. Example: 'Bearer {token}'"
+    }
+}
 
 def create_app(config_override=None):
     """
@@ -41,6 +49,7 @@ def extensions(app):
 
     api.init_app(app)
     db.init_app(app)
+    JWTManager(app)
     migrate.init_app(app, db)
     register_routes(api, app, 'spost')
 
