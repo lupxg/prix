@@ -5,6 +5,7 @@ x-app: &default-app
     target: app-final
   secrets:
     - db-password
+    - db-root-password
   restart: unless-stopped
   depends_on:
     db:
@@ -25,6 +26,7 @@ services:
       - db-data:/var/lib/mysql
     environment: 
       MARIADB_ROOT_PASSWORD_FILE: "${MARIADB_ROOT_PASSWORD_FILE}" 
+      MARIADB_PASSWORD_FILE: "${MARIADB_PASSWORD_FILE}"
       MARIADB_DATABASE: "${MARIADB_NAME}"
     expose: 
       - "${MARIADB_PORT:-3306}"
@@ -72,6 +74,8 @@ volumes:
 secrets:
   db-password:
     file: ./infrastructure/db/password.txt
+  db-root-password:
+    file: ./infrastructure/db/root-password.txt
 
 networks:
   frontend:
