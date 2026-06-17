@@ -1,5 +1,5 @@
 import os
-from typing import List, Type
+from redis import Redis
 
 def read_secret(path):
     try:
@@ -29,3 +29,14 @@ SQLALCHEMY_DATABASE_URI = os.getenv("MARIADB_DATABASE_URL", db_url)
 jwt_secret_key = os.getenv("JWT_SECRET_KEY")
 jwt_token_expires = os.getenv("JWT_ACCESS_TOKEN_EXPIRES", 900)
 jwt_refresh_token_expires = os.getenv("JWT_REFRESH_TOKEN_EXPIRES", 604800)
+
+# Session config.
+SESSION_TYPE = os.getenv("SESSION_TYPE", "redis")
+REDIS_PASSWORD = os.getenv("REDIS_PASSWORD")
+redis_client = Redis(
+    host="cache",
+    port=6379,
+    password=REDIS_PASSWORD,
+    decode_responses=False
+)
+SESSION_REDIS=redis_client

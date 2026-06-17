@@ -1,6 +1,7 @@
 from flask import Flask
 from app.extensions import db, migrate
 from flask_restx import Api
+from flask_session import Session
 from flask_jwt_extended import JWTManager
 from .routes import register_routes
 
@@ -25,7 +26,7 @@ def create_app(config_override=None):
 
     if config_override:
         app.config.update(config_override)
-
+    
     extensions(app)
 
     return app
@@ -50,6 +51,7 @@ def extensions(app):
     api.init_app(app)
     db.init_app(app)
     JWTManager(app)
+    Session(app)
     migrate.init_app(app, db)
     register_routes(api, app, 'spost')
 
