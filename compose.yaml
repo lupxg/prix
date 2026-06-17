@@ -69,10 +69,26 @@ services:
     networks:
       - frontend
       - backend
+    
+  cache:
+    image: redis:7.4-alpine
+    restart: unless-stopped
+    command:
+      - redis-server
+      - --requirepass
+      - ${REDIS_PASSWORD}
+      - --loglevel
+      - warning
+    volumes:
+     - cache:/data
+    networks:
+      - frontend
 
 volumes:
   db-data:
-  
+  cache:
+    driver: local
+   
 secrets:
   db-password:
     file: ./infrastructure/db/password.txt

@@ -1,9 +1,12 @@
+import secrets
+import json
 from flask_restx import Namespace, Resource, fields
-from flask import request
+from flask import request, make_response
 from flask_jwt_extended import create_access_token
 from http import HTTPStatus
 from .model import User
 from ...extensions import db
+from app.config import redis_client
 
 api = Namespace('auth', description='auth namespace')
 
@@ -48,8 +51,30 @@ class UserLogin(Resource):
         if not user or not user.check_password(data.get('password')):
             return {"msg": "Invalid credentials"}, HTTPStatus.UNAUTHORIZED
         
-        access_token = create_access_token(identity=str(user.id))
+        session_id = secrets.token_urlsafe(32)
 
-        return {"access_token": access_token}, HTTPStatus.OK
+        redis_client.setex(
+            f"session:{session_id}",
+            60 * 60 * 24 * 7,
+            json.dumps({"user_id": user.id})
+        )
+        
+        response = make_response(
+            {"msg": "Logged in"},
+            HTTPStatus.OK
+        )
+
+        response.set_cookie(
+            "session_id",
+            session_id,
+            httponly=True,
+            secure=True,
+            samesite="Lax",
+            max_age=60 * 60 * 24 * 7
+        )
+
+        return response
+
+
 
 
