@@ -17,13 +17,13 @@ post_model = api.model("Post", {
     "created_at": fields.DateTime(),
 })
 
-create_post_model = api.model("CreatePost", {
+trasient_post_model = api.model("Post", {
     "title": fields.String(required=True),
     "body": fields.String(required=True),
 })
 
 @api.route("/")
-class PostsList(Resource):
+class Posts(Resource):
     @api.doc('get_posts')
     @api.marshal_with(post_model, as_list=True)
     def get(self):
@@ -34,10 +34,10 @@ class PostsList(Resource):
         posts = db.session.execute(stmt).scalars().all()
 
         return posts, HTTPStatus.OK
-
+    
 
     @api.response(HTTPStatus.CREATED, 'Created post')
-    @api.expect(create_post_model)
+    @api.expect(trasient_post_model)
     @jwt_required()
     @api.doc(security='Bearer')
     def post(self):
@@ -53,3 +53,13 @@ class PostsList(Resource):
         db.session.commit()
 
         return {"msg" : "Post created"}, HTTPStatus.CREATED
+    
+
+    @api.response(HTTPStatus.OK, 'Update post')
+    @api.expect(trasient_post_model)
+    @jwt_required()
+    @api.doc(security='Bearer')
+    def update(self):
+        """ Update a post
+        """
+        pass
