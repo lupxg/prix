@@ -29,9 +29,14 @@ class Posts(Resource):
     def get(self):
         """ Get a list of posts
         """
-
-        stmt = select(Post)
-        posts = db.session.execute(stmt).scalars().all()
+        
+        page = request.args.get('page', 1, type=int)
+        pagination = Post.query.paginate(
+            page=page,
+            per_page=10,
+            error_out=False 
+        )
+        posts = pagination.items
 
         return posts, HTTPStatus.OK
     
@@ -50,7 +55,7 @@ class Posts(Resource):
         db.session.add(post)
         db.session.commit()
 
-        return data, HTTPStatus.CREATED
+        return post, HTTPStatus.CREATED
     
 
     @api.response(HTTPStatus.OK, 'Update post')
